@@ -1,7 +1,8 @@
 FROM python:2.7
 
 RUN pip install --upgrade pip && \
-    pip install flask
+    pip install flask && \
+    pip install redis
 
 ENV FLASK_APP /root/fl.py
 

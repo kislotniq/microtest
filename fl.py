@@ -1,26 +1,49 @@
 from flask import Flask
 from flask import request
+import redis
 from flask import abort
 
 import string
 
 app = Flask(__name__)
+storage = redis.StrictRedis(host="redis", port=6379, db=0)
 
 
 
-def listCustomers():
-    return [42, 93, 84, 13]
+def isKeyword(key):
+    return key in ['uid_counter']
+
+def listCustomerIds():
+    # TODO: what's the typical way of separating actual data
+    #       from service data?
+    ids = [key for key in storage.keys() if not isKeyword(key)]
+    return ids
 
 def getCustomerName(identifier):
-    return 'John'
+    """
+    Returns name or None if customer doesn't exist
+    """
+    return storage.get(identifier)
 
 def setCustomerName(identifier, new_name):
-    pass
+    """
+    Returns True if customer exists and name was set
+    """
+    if storage.get(identifier):
+        return storage.set(identifier, new_name) and True
+
+    return False
 
 def createCustomer(name):
-    # TODO: atomically increment counter and get it's value
-    #       create a new customer with the id
-    pass
+    """
+    Returns customer id if customer was created,
+    None otherwise
+    """
+    # TODO: how atomic is this incr?
+    new_id = storage.incr('uid_counter')
+    if not storage.setnx(new_id, name):
+        return None
+    return new_id
 
 
 def nameIsAllowed(name):
@@ -36,8 +59,8 @@ def nameIsAllowed(name):
 
 
 @app.route('/customers')
-def presentationListCustomers():
-    customer_ids = listCustomers()
+def presentationListCustomerIds():
+    customer_ids = listCustomerIds()
     stringified_ids = [str(x) for x in customer_ids]
     return string.join(stringified_ids, '\n')
 
