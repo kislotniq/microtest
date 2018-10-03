@@ -94,7 +94,7 @@ def presentationCreateCustomer():
 
 @app.route('/customers/<int:id>', methods=['PUT'])
 def presentationSetCustomerName(id):
-    new_name = request.args.get("newName")
+    new_name = request.args.get('newName')
 
     if not new_name:
         abort(400, 'Error: "newName" argument is mandatory')
