@@ -14,7 +14,7 @@ def listCustomers():
 def getCustomerName(identifier):
     return 'John'
 
-def setNewCustomerName(identifier, new_name):
+def setCustomerName(identifier, new_name):
     pass
 
 def createCustomer(name):
@@ -42,11 +42,11 @@ def presentationListCustomers():
     return string.join(stringified_ids, '\n')
 
 
-@app.route('/customers/<int:id>')
-def presentationGetCustomer(id):
+@app.route('/customers/<int:cid>')
+def presentationGetCustomer(cid):
     # No need to sanitize id, looks like flask
     # properly handles non-integer values
-    return getCustomerName(id) + '\n'
+    return getCustomerName(cid) + '\n'
 
 
 @app.route('/customers', methods=['PUT'])
@@ -74,5 +74,5 @@ def presentationSetCustomerName(id):
     if not nameIsAllowed(new_name):
         abort(400, 'Error: only lower case latin letters for newName allowed')
 
-    setNewCustomerName(id, new_name)
+    setCustomerName(id, new_name)
     return "Ok, new name: {n}\n".format(n=new_name)
