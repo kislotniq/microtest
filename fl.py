@@ -46,7 +46,11 @@ def presentationListCustomers():
 def presentationGetCustomer(cid):
     # No need to sanitize id, looks like flask
     # properly handles non-integer values
-    return getCustomerName(cid) + '\n'
+    customer_name = getCustomerName(cid)
+    if customer_name:
+        return customer_name
+    else:
+        abort(404, 'Error: customer "{cid}" not found'.format(cid=cid))
 
 
 @app.route('/customers', methods=['PUT'])
@@ -70,9 +74,11 @@ def presentationSetCustomerName(id):
     new_name = request.args.get("newName")
 
     if not new_name:
-        abort(400, 'Error: missing the newName argument')
+        abort(400, 'Error: "newName" argument is mandatory')
     if not nameIsAllowed(new_name):
-        abort(400, 'Error: only lower case latin letters for newName allowed')
+        abort(400, 'Error: only lower case latin letters allowed for "newName"')
 
-    setCustomerName(id, new_name)
-    return "Ok, new name: {n}\n".format(n=new_name)
+    if setCustomerName(id, new_name):
+        return "Ok, new name: {n}\n".format(n=new_name)
+    else:
+        abort(500, 'Error: failed to set customer name')
