@@ -17,6 +17,11 @@ def getCustomerName(identifier):
 def setNewCustomerName(identifier, new_name):
     pass
 
+def createCustomer(name):
+    # TODO: atomically increment counter and get it's value
+    #       create a new customer with the id
+    pass
+
 
 def nameIsAllowed(name):
     """
@@ -42,6 +47,22 @@ def presentationGetCustomer(id):
     # No need to sanitize id, looks like flask
     # properly handles non-integer values
     return getCustomerName(id) + '\n'
+
+
+@app.route('/customers', methods=['PUT'])
+def presentationCreateCustomer():
+    name = request.args.get('name')
+
+    if not name:
+        abort(400, 'Error: "name" argument is mandatory')
+    if not nameIsAllowed(name):
+        abort(400, 'Error: only lower case lating letters allowed for "name"')
+
+    customer_id = createCustomer(name)
+    if customer_id:
+        return 'Ok, id: {cid}'.format(cid=customer_id)
+    else:
+        abort(500, 'Error: failed to create customer')
 
 
 @app.route('/customers/<int:id>', methods=['PUT'])
