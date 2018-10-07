@@ -58,14 +58,14 @@ def nameIsAllowed(name):
 
 
 
-@app.route('/customers')
+@app.route('/v1/customers')
 def presentationListCustomerIds():
     customer_ids = listCustomerIds()
     stringified_ids = [str(x) for x in customer_ids]
     return string.join(stringified_ids, '\n')
 
 
-@app.route('/customers/<int:cid>')
+@app.route('/v1/customers/<int:cid>')
 def presentationGetCustomer(cid):
     # No need to sanitize id, looks like flask
     # properly handles non-integer values
@@ -76,7 +76,7 @@ def presentationGetCustomer(cid):
         abort(404, 'Error: customer "{cid}" not found'.format(cid=cid))
 
 
-@app.route('/customers', methods=['PUT'])
+@app.route('/v1/customers', methods=['PUT'])
 def presentationCreateCustomer():
     name = request.args.get('name')
 
@@ -92,7 +92,7 @@ def presentationCreateCustomer():
         abort(500, 'Error: failed to create customer')
 
 
-@app.route('/customers/<int:id>', methods=['PUT'])
+@app.route('/v1/customers/<int:id>', methods=['PUT'])
 def presentationSetCustomerName(id):
     new_name = request.args.get('newName')
 
