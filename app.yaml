@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fl
+spec:
+  selector:
+    matchLabels:
+      app: fl
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: fl
+    spec:
+      nodeSelector:
+        app: fl
+      containers:
+        - name: fl
+          image: localhost:5000/fl:latest
+          ports:
+            - name: http
+              containerPort: 80
